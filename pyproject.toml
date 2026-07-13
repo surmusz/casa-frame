@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "casa-frame"
+version = "1.1.0"
+description = "CASA multi-agent orchestration framework — Contract, Artifact, Scope, Authority"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "AGPL-3.0-or-later"
+authors = [{ name = "CASA Contributors" }]
+keywords = ["multi-agent", "orchestration", "llm", "workflow"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23"]
+config = ["pyyaml>=6.0"]
+watch = ["watchdog>=3.0"]
+redis = ["redis>=5.0"]
+postgres = ["psycopg[pool]>=3.1"]
+s3 = ["boto3>=1.28"]
+api = ["fastapi>=0.100", "uvicorn>=0.23"]
+otel = ["opentelemetry-api>=1.20", "opentelemetry-sdk>=1.20"]
+all = ["casa-frame[dev,config,api,otel]"]
+
+[project.urls]
+Homepage = "https://github.com/surmusz/casa-frame"
+Repository = "https://github.com/surmusz/casa-frame"
+Documentation = "https://github.com/surmusz/casa-frame/tree/main/docs"
+Issues = "https://github.com/surmusz/casa-frame/issues"
+
+[project.scripts]
+casa = "casa.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["casa*"]
+
+[tool.setuptools.package-data]
+casa = ["schemas/*.sql"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
