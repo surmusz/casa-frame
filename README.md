@@ -11,6 +11,29 @@
 **仓库**：[github.com/surmusz/casa-frame](https://github.com/surmusz/casa-frame)  
 **理论稿**：[Gist](https://gist.github.com/surmusz/c12bc714a4aae25b676d3f7d113dcd34)
 
+## TL;DR (English)
+
+**CASA** = **C**ontract + **A**rtifact + **S**cope + **A**uthority.
+
+Multi-agent systems often share one growing chat as both control plane and data bus.
+That works for demos and breaks for long, governed pipelines.
+
+CASA keeps order in the system, not in the prompt:
+
+- **Contract** — structured intent (not verbal overrides)
+- **Artifact** — typed outputs as the only agent-to-agent I/O
+- **Scope** — who can see what (`job` / `session` / …)
+- **Authority** — tool permission ∩ data permission
+
+Vs chatty **Team/Crew** and linear **n8n-style** context stuffing: fewer tokens, lower latency, auditable traces — see the [theory Gist](https://gist.github.com/surmusz/c12bc714a4aae25b676d3f7d113dcd34) (charts included).
+
+```bash
+pip install -e ".[dev]"
+python examples/minimal/run.py
+```
+
+License: **AGPL-3.0-or-later**. Commercial use that cannot comply: email `surmusz@gmail.com`.
+
 ---
 
 ## 仓库结构
@@ -44,6 +67,7 @@ casa-frame/              # ← 你在这里
 
 ## 目录
 
+0. [TL;DR (English)](#tldr-english)
 1. [快速开始（5 分钟）](#1-快速开始5-分钟)
 2. [模块结构](#2-模块结构)
 3. [四支柱详解](#3-四支柱详解)
