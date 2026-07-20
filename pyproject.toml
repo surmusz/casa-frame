@@ -32,6 +32,8 @@ postgres = ["psycopg[pool]>=3.1"]
 s3 = ["boto3>=1.28"]
 api = ["fastapi>=0.100", "uvicorn>=0.23"]
 otel = ["opentelemetry-api>=1.20", "opentelemetry-sdk>=1.20"]
+# Optional Cursor SDK integration (pinned: public beta). Not included in `all`.
+cursor = ["cursor-sdk==0.1.9"]
 all = ["casa-frame[dev,config,api,otel]"]
 
 [project.urls]
