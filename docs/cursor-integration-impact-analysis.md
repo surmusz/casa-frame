@@ -1,7 +1,7 @@
 # Cursor 审查集成 · CASA 框架影响分析
 
 > 日期：2026-07-20 · Plan `20260720-cursor-impl` Step 8  
-> 范围：库层 `casa[cursor]` 可选 extra + 平台 ADR 对齐（ADR-55 修订 / ADR-58 新增）  
+> 范围：库层 `casa[cursor]` 可选 extra + 平台 ADR 对齐（ADR-55 修订 / ADR-63 新增；ADR-58=项目层级，非 Cursor）  
 > 依据：库 [ADR-0001](adr/0001-cursor-api-integration.md)、平台 `casa_agent/01-decisions.md`、实现 `casa/extras/cursor/**`、step 3/6 产物与 step 4/5 review 吸收结论  
 > 非目标：本文件不修改代码 / ADR / `casa_agent/**`
 
@@ -28,7 +28,7 @@ Cursor API 合入 CASA 的主定位是**产物审查**，不是内容生成：
 | 库公开面 | 懒加载导出 4 项 | `casa-frame/casa/_exports.py`：`CursorAgentExecutor` / `CursorConfig` / `CursorContentGenerator` / `CursorReviewHook` |
 | 库 ADR | Cursor API 集成设计 | `casa-frame/docs/adr/0001-cursor-api-integration.md` |
 | 平台 ADR | 多 provider 经济账扩展 | `casa_agent/01-decisions.md` **ADR-55**（修订） |
-| 平台 ADR | 审查开关与范围 | `casa_agent/01-decisions.md` **ADR-58**（新增） |
+| 平台 ADR | 审查开关与范围 | `casa_agent/01-decisions.md` **ADR-63**（新增） |
 | 测试 | 安全回归 + 功能单测 | `casa-frame/tests/extras/test_cursor.py`（step 6 后 30 passed） |
 
 **未改内核编排**：`casa/orchestration/execute.py`、`executor.py`、既有 `PipelineHook` 基线保持不变；Cursor 能力以 optional extra + 平台装配注入，不耦合内核（对齐 ADR-8 / ADR-37）。
@@ -69,8 +69,9 @@ CursorAgentExecutor, CursorConfig, CursorContentGenerator, CursorReviewHook
 
 | ADR | 变更类型 | 要点 |
 |-----|----------|------|
-| **ADR-58** | 新增 | `tenant_policy.cursor_review.{enabled,review_stages,fail_stage_on}`：mgmt 唯一写 → TenantPolicySync → worker 注入 `CursorConfig`；库不读 mgmt |
+| **ADR-63** | 新增 | `tenant_policy.cursor_review.{enabled,review_stages,fail_stage_on}`：mgmt 唯一写 → TenantPolicySync → worker 注入 `CursorConfig`；库不读 mgmt |
 | **ADR-55** | 修订 | 经济账 Gate 扩展为**多 provider**：自托管仍按 token；Cursor 外呼按调用×单价（token=Unknown 时摊销）；未配置该 provider 计费口径前 Gate **不可验收** |
+| **ADR-58** | 既有（消歧） | 平台 vlepontas **项目层级**（`tenant → project → session → run`）；**非** Cursor 审查开关 |
 
 ---
 
@@ -104,7 +105,7 @@ CursorReviewHook.on_stage_end（可选）
 
 ### 3.2 管理侧开关与范围
 
-对齐 ADR-58 + 库 ADR-0001 §2.4：
+对齐 ADR-63 + 库 ADR-0001 §2.4：
 
 ```text
 mgmt 写 tenant_policy.cursor_review.*     （ADR-26 唯一写）
@@ -165,7 +166,8 @@ worker 读 effective policy → CursorConfig.from_tenant_policy(...)
 | **ADR-47**（sandbox 分级） | `cwd` 落目录策略 + 平台只读挂载；Cursor runtime **需出网**，不适用 L1「禁网」整进程模型 |
 | **ADR-48**（builder≠judge） | 独立 `agent_id` + 确定性触发（enabled/review_stages/Contract）；**不等同于**终段 evaluator stage；严格终段须 Contract 显式排 |
 | **ADR-55** | **修订**：L0 冒烟口径保留；经济账 Gate 扩展为多 provider（自托管 token + Cursor 调用摊销）；未配该 provider 计费口径前不可验收（链库 ADR §6/§13） |
-| **ADR-58** | **新增**：Cursor 审查一键开关与 `review_stages` / `fail_stage_on` 平台路径（对齐库 ADR §2.4） |
+| **ADR-58** | **消歧**：平台 vlepontas ADR-58 = **项目层级**（`tenant → project → session → run`）；**非** Cursor 审查开关 |
+| **ADR-63** | **新增**：Cursor 审查一键开关与 `review_stages` / `fail_stage_on` 平台路径（对齐库 ADR §2.4） |
 
 相关但非本表逐条展开（库 ADR §10 已列）：ADR-32/35（fencing / 工具副作用 wrapper，平台装配前置）、ADR-49（model 别名路由；`composer-2.5` 仅 fallback）。
 
@@ -253,7 +255,7 @@ worker 读 effective policy → CursorConfig.from_tenant_policy(...)
 | 类型 | 路径 |
 |------|------|
 | 库 ADR | `casa-frame/docs/adr/0001-cursor-api-integration.md` |
-| 平台 ADR | `casa_agent/01-decisions.md`（ADR-55、ADR-58） |
+| 平台 ADR | `casa_agent/01-decisions.md`（ADR-55、ADR-63；ADR-58=项目层级） |
 | 实现 | `casa-frame/casa/extras/cursor/{config,executor,hooks,schema,errors,_runtime}.py` |
 | 导出 | `casa-frame/casa/_exports.py` |
 | 编排基线 | `casa-frame/casa/orchestration/{execute,executor}.py`；`casa-frame/casa/hooks.py` |

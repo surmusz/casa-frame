@@ -77,7 +77,7 @@ Cursor SDK（`cursor-sdk` Python / `@cursor/sdk` TS）的 `Agent.prompt()` / `Ag
 |------|------|------|------|
 | `CursorConfig.enabled` | bool | `false` | 总开关；`false` 时 `CursorReviewHook` no-op，且不排 Cursor review stage |
 | `CursorConfig.review_stages` | `list[str]` | `[]` | 哪些 stage 的产物进入审查；空列表 = 不审 |
-| `CursorConfig.fail_stage_on` | `list[str]` | `[]` | 哪些 stage 在 verdict 为 `fail`/`conditional` 时标记 stage 失败；**空 = audit-only**（仅写 review artifact + audit，不 fail stage）；对齐 ADR-58 |
+| `CursorConfig.fail_stage_on` | `list[str]` | `[]` | 哪些 stage 在 verdict 为 `fail`/`conditional` 时标记 stage 失败；**空 = audit-only**（仅写 review artifact + audit，不 fail stage）；对齐 ADR-63 |
 | （可选）tenant 覆盖 | 由平台注入同一载体 | — | 库只提供字段与注入点，**不读 mgmt** |
 
 **平台路径**（库声明前置条件，平台装配）：
@@ -185,7 +185,9 @@ Cursor agent **自带 file-edit / shell 工具** = 高副作用执行体。**cas
 | ADR-47（sandbox 分级） | §4：cwd 落 L1 **目录策略**；Cursor runtime 需出网，不适用 L1 禁网整进程 |
 | ADR-48（builder≠judge） | §2.2：独立 `agent_id` + 确定性触发；**不等同于** ADR-48 终段 evaluator stage；严格终段须 Contract 显式排 |
 | ADR-49（model 别名路由） | §2.3：别名 → mgmt 可配 → cursor id；`composer-2.5` 仅 fallback |
-| ADR-55（L0 real-provider 早测） | **冒烟口径**：§3.3 对齐（5–10 并发、token Unknown）。**经济账口径**：待平台 ADR 修订（本 Plan step 7），未修订前 Gate 对 Cursor **不可验收** |
+| ADR-55（多 provider 经济账 / L0 早测） | **冒烟口径**：§3.3 对齐（5–10 并发、token Unknown）。**经济账口径**：待平台 ADR 修订（本 Plan step 7），未修订前 Gate 对 Cursor **不可验收** |
+| ADR-58（项目层级） | 平台 vlepontas ADR-58 = `tenant → project → session → run`；**非** Cursor 审查开关（审查开关见 ADR-63） |
+| ADR-63（Cursor 审查开关与范围） | §2.4：mgmt 唯一写 `tenant_policy.cursor_review.{enabled,review_stages,fail_stage_on}`；TenantPolicySync（ADR-33）；worker 注入 `CursorConfig` |
 
 ## 11. 非目标 / 推迟
 
